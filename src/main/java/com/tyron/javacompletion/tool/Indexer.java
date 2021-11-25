@@ -1,6 +1,8 @@
 package com.tyron.javacompletion.tool;
 
 import com.google.common.collect.ImmutableMap;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import com.tyron.javacompletion.file.FileManager;
 import com.tyron.javacompletion.file.PathUtils;
 import com.tyron.javacompletion.file.SimpleFileManager;
@@ -91,6 +95,19 @@ public class Indexer {
                                 path.toString(),
                                 content.get());
         module.addOrReplaceFileScope(fileScope);
+    }
+
+    /**
+     * Programmatic entry to indexing jar Files
+     * @param jarFiles List of jar files to index
+     * @param outputFile The output file (not a directory)
+     */
+    public static void createIndex(List<File> jarFiles, File outputFile) {
+        List<String> args = new ArrayList<>();
+        args.add(jarFiles.stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator)));
+        args.add("-o");
+        args.add(outputFile.getAbsolutePath());
+        main(args.toArray(new String[0]));
     }
 
     public static void main(String[] args) {
