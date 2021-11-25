@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.tyron.javacompletion.model.Entity;
 import com.tyron.javacompletion.typesolver.EntityShadowingListBuilder;
 

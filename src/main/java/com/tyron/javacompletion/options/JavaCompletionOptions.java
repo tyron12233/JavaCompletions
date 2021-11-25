@@ -1,8 +1,10 @@
 package com.tyron.javacompletion.options;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 import java.util.logging.Level;
-import javax.annotation.Nullable;
+
 
 /** User provided options. */
 public interface JavaCompletionOptions {

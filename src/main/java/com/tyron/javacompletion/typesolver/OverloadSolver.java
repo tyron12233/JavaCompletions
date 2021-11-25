@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.tyron.javacompletion.logging.JLogger;
 import com.tyron.javacompletion.model.ClassEntity;
 import com.tyron.javacompletion.model.EntityWithContext;

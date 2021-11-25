@@ -2,7 +2,7 @@ package com.tyron.javacompletion.options;
 
 import com.google.common.collect.ImmutableList;
 
-import javax.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.util.List;
 import java.util.logging.Level;
 

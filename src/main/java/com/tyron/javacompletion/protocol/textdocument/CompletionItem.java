@@ -3,7 +3,7 @@ package com.tyron.javacompletion.protocol.textdocument;
 import com.google.gson.JsonElement;
 import com.tyron.javacompletion.protocol.TextEdit;
 
-import javax.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 
