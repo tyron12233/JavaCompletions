@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JavaComp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JavaComp_jar</output-path>
+    <root id="archive" name="JavaComp.jar">
+      <element id="file-copy" path="$PROJECT_DIR$/libs/javac-new.jar" />
+      <element id="module-output" name="JavaComp.main" />
+    </root>
+  </artifact>
+</component>

@@ -18,9 +18,4 @@
       <module name="JavaComp.main" options="--add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" />
     </option>
   </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="JavaComp.main" options="--add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" />
-    </option>
-  </component>
 </project>
