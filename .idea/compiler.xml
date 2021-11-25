@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="USE_RELEASE_OPTION" value="false" />
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto.value/auto-value/1.8.2/3461db13c613c40b333e8b58e842aabef2386514/auto-value-1.8.2.jar" />
+        </processorPath>
+        <module name="JavaComp.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="1.8" />
+  </component>
+  <component name="EclipseCompilerSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="JavaComp.main" options="--add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" />
+    </option>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="JavaComp.main" options="--add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="javac-new">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/javac-new.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
