@@ -105,7 +105,6 @@ class CompleteMemberAction implements CompletionAction {
             return ImmutableList.of();
         }
 
-        // TODO: handle array type
         if (solvedParent.get().getArrayLevel() > 0) {
             return ImmutableList.of(new CompletionCandidate() {
                 @Override

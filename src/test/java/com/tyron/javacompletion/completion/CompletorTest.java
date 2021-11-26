@@ -2,9 +2,9 @@ package com.tyron.javacompletion.completion;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.tyron.javacompletion.file.SimpleFileManager;
+import com.tyron.javacompletion.logging.JLogger;
 import com.tyron.javacompletion.model.FileScope;
 import com.tyron.javacompletion.model.Module;
 import com.tyron.javacompletion.options.IndexOptions;
@@ -12,33 +12,32 @@ import com.tyron.javacompletion.parser.AstScanner;
 import com.tyron.javacompletion.parser.ParserContext;
 import com.tyron.javacompletion.project.PositionContext;
 import com.tyron.javacompletion.project.SimpleModuleManager;
-import org.junit.jupiter.api.Test;
 import org.openjdk.source.tree.LineMap;
 import org.openjdk.tools.javac.tree.JCTree.JCCompilationUnit;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
 public abstract class CompletorTest {
-    private static final String COMPLETION_POINT_MARK = "/** @complete */";
-    private static final String INSERTION_POINT_MARK = "/** @insert */";
+    public static final String COMPLETION_POINT_MARK = "/** @complete */";
+    public static final String INSERTION_POINT_MARK = "/** @insert */";
+
     private static String TEST_DATA_DIR = "";
 
     private final SimpleFileManager fileManager = new SimpleFileManager();
     private final SimpleModuleManager moduleManager = new SimpleModuleManager();
     
     public CompletorTest() {
+        JLogger.setLogLevel(Level.ALL);
         TEST_DATA_DIR = getTestDirectory();
     }
 
