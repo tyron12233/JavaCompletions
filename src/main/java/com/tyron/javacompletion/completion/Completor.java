@@ -62,7 +62,7 @@ public class Completor {
         // PositionContext gets the tree path whose leaf node includes the position
         // (position < node's endPosition). However, for completions, we want the leaf node either
         // includes the position, or just before the position (position == node's endPosition).
-        // Decresing column by 1 will decrease position by 1, which makes
+        // Decreasing column by 1 will decrease position by 1, which makes
         // adjustedPosition == node's endPosition - 1 if the node is just before the actual position.
         int contextColumn = column > 0 ? column - 1 : 0;
         Optional<PositionContext> positionContext =
