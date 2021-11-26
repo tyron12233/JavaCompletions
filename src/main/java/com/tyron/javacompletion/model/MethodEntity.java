@@ -8,7 +8,10 @@ import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import com.tyron.javacompletion.model.util.QualifiedNames;
+import org.openjdk.javax.lang.model.element.Modifier;
 
 /** Represents a method. */
 public class MethodEntity extends Entity implements EntityScope {
@@ -133,6 +136,20 @@ public class MethodEntity extends Entity implements EntityScope {
 
     public boolean isConstructor() {
         return getSimpleName().equals(classEntity.getSimpleName());
+    }
+
+    private Set<Modifier> modifiers;
+
+    public void setModifiers(Set<Modifier> modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    public boolean isDefault() {
+        return modifiers.contains(Modifier.DEFAULT);
+    }
+
+    public boolean isPublic() {
+        return modifiers.contains(Modifier.PUBLIC);
     }
 
     @Override

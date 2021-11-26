@@ -37,7 +37,6 @@ public abstract class CompletorTest {
     private final SimpleModuleManager moduleManager = new SimpleModuleManager();
     
     public CompletorTest() {
-        JLogger.setLogLevel(Level.ALL);
         TEST_DATA_DIR = getTestDirectory();
     }
 
