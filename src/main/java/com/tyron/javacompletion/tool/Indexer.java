@@ -55,17 +55,17 @@ public class Indexer {
             ImmutableMap<String, Consumer<Path>> handlers =
                     ImmutableMap.<String, Consumer<Path>>of(
                             ".class",
-                            subpath -> classModuleBuilder.processClassFile(subpath),
+                            classModuleBuilder::processClassFile,
                             ".java",
                             subpath -> addJavaFile(subpath, moduleManager.getModule(), fileManager));
             if (Files.isDirectory(path)) {
-                System.out.println("Indexing directory: " + inputPath.toString());
+                System.out.println("Indexing directory: " + inputPath);
                 PathUtils.walkDirectory(
                         path,
                         handlers,
-                        /* ignorePredicate= */ subpath -> fileManager.shouldIgnorePath(subpath));
+                        /* ignorePredicate= */ fileManager::shouldIgnorePath);
             } else if (inputPath.endsWith(".jar") || inputPath.endsWith(".srcjar")) {
-                System.out.println("Indexing JAR file: " + inputPath.toString());
+                System.out.println("Indexing JAR file: " + inputPath);
                 try {
                     PathUtils.walkDirectory(
                             PathUtils.getRootPathForJarFile(path),
@@ -88,13 +88,15 @@ public class Indexer {
 
     private void addJavaFile(Path path, Module module, FileManager fileManager) {
         Optional<CharSequence> content = fileManager.getFileContent(path);
-        FileScope fileScope =
-                new AstScanner(IndexOptions.NON_PRIVATE_BUILDER.build())
-                        .startScan(
-                                parserContext.parse(path.toString(), content.get()),
-                                path.toString(),
-                                content.get());
-        module.addOrReplaceFileScope(fileScope);
+        if (content.isPresent()) {
+            FileScope fileScope =
+                    new AstScanner(IndexOptions.NON_PRIVATE_BUILDER.build())
+                            .startScan(
+                                    parserContext.parse(path.toString(), content.get()),
+                                    path.toString(),
+                                    content.get());
+            module.addOrReplaceFileScope(fileScope);
+        }
     }
 
     /**
