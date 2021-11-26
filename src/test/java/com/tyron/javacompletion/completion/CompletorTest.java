@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class CompletorTest {
+public abstract class CompletorTest {
     private static final String COMPLETION_POINT_MARK = "/** @complete */";
     private static final String INSERTION_POINT_MARK = "/** @insert */";
     private static String TEST_DATA_DIR = "";
@@ -39,20 +39,24 @@ public class CompletorTest {
     private final SimpleModuleManager moduleManager = new SimpleModuleManager();
     
     public CompletorTest() {
-        TEST_DATA_DIR = Paths.get(".").toFile().getAbsolutePath() + "/src/test/java/com" +
+        TEST_DATA_DIR = getTestDirectory();
+    }
+
+    public String getTestDirectory() {
+        return Paths.get(".").toFile().getAbsolutePath() + "/src/test/java/com" +
                 "/tyron/javacompletion/completion/testdata/";
     }
 
-    private Path getInputFilePath(String filename) {
+    protected Path getInputFilePath(String filename) {
         return Paths.get(TEST_DATA_DIR + filename).toAbsolutePath();
     }
 
-    private List<CompletionCandidate> completeTestFile(String filename) {
+    protected List<CompletionCandidate> completeTestFile(String filename) {
         String testDataContent = getFileContent(filename);
         return completeContent(filename, testDataContent);
     }
 
-    private String getFileContent(String filename) {
+    protected String getFileContent(String filename) {
         Optional<CharSequence> fileContent = fileManager.getFileContent(getInputFilePath(filename));
         if (fileContent.isPresent()) {
             return fileContent.get().toString();
@@ -65,7 +69,7 @@ public class CompletorTest {
         }
     }
 
-    private CompletionParams createCompletionParams(
+    protected CompletionParams createCompletionParams(
             String inputFilename, String testDataContent, String... otherFiles) {
 
         Path inputFilePath = getInputFilePath(inputFilename);
@@ -105,11 +109,11 @@ public class CompletorTest {
         return new CompletionParams(line, column);
     }
 
-    private void assertCompletion(String filename, String toComplete, String... expectedCandidates) {
+    protected void assertCompletion(String filename, String toComplete, String... expectedCandidates) {
         assertCompletion(filename, ImmutableList.of(toComplete), expectedCandidates);
     }
 
-    private void assertCompletion(
+    protected void assertCompletion(
             String filename, List<String> toCompleteCases, String... expectedCandidates) {
         for (String toComplete : toCompleteCases) {
             List<CompletionCandidate> candidates = completeWithContent(filename, toComplete);
@@ -146,7 +150,7 @@ public class CompletorTest {
         }
     }
 
-    private List<CompletionCandidate> completeContent(
+    protected List<CompletionCandidate> completeContent(
             String inputFilename, String testDataContent, String... otherFiles) {
         CompletionParams params = createCompletionParams(inputFilename, testDataContent, otherFiles);
         return new Completor(moduleManager.getFileManager())
@@ -155,18 +159,18 @@ public class CompletorTest {
                 .getCompletionCandidates();
     }
 
-    private static List<String> getCandidateNames(List<CompletionCandidate> candidates) {
+    protected static List<String> getCandidateNames(List<CompletionCandidate> candidates) {
         return candidates.stream().map(CompletionCandidate::getName).collect(Collectors.toList());
     }
 
-    private List<CompletionCandidate> completeWithContent(
+    protected List<CompletionCandidate> completeWithContent(
             String filename, String toInsert, String... otherFiles) {
         String testDataContent = getFileContent(filename);
         String newContent = testDataContent.replace(INSERTION_POINT_MARK, toInsert);
         return completeContent(filename, newContent, otherFiles);
     }
 
-    private String extractCompletionPrefixWithContent(String filename, String toInsert) {
+    protected String extractCompletionPrefixWithContent(String filename, String toInsert) {
         String testDataContent = getFileContent(filename);
         String newContent = testDataContent.replace(INSERTION_POINT_MARK, toInsert);
         assertThat(newContent).contains(COMPLETION_POINT_MARK);
@@ -188,141 +192,5 @@ public class CompletorTest {
             this.line = line;
             this.column = column;
         }
-    }
-
-    /** TESTS **/
-
-    @Test
-    public void completeNewStatement() throws Exception {
-        List<String> keywords =
-                Arrays.stream(KeywordCompletionCandidate.values())
-                        .map(KeywordCompletionCandidate::getName)
-                        .collect(Collectors.toList());
-        List<String> expectedMembers =
-                ImmutableList.of(
-                        "CompleteNewStatement",
-                        "param1",
-                        "stringParam",
-                        "CONSTANT",
-                        "InnerClass",
-                        "List",
-                        "subClassMemberField",
-                        "memberField",
-                        "memberMethod",
-                        "staticMethod",
-                        "staticMethod", // TODO: Fix duplicate.
-                        "com",
-                        // From java.lang
-                        "java",
-                        "Object",
-                        // From Object
-                        "toString",
-                        "toString");
-        assertThat(getCandidateNames(completeTestFile("CompleteNewStatement.java")))
-                .containsExactlyElementsIn(Iterables.concat(expectedMembers, keywords));
-    }
-
-    @Test
-    public void completeMemberSelection() throws Exception {
-        String baseAboveCompletion = "above./** @complete */";
-        List<String> aboveCases =
-                ImmutableList.of(baseAboveCompletion, baseAboveCompletion + "\nabove.aboveMethod();");
-        assertCompletion("CompleteInMethod.java", aboveCases, "aboveField", "aboveMethod", "toString");
-
-        String baseBelowCompletion = "below./** @complete */";
-        List<String> belowCases =
-                ImmutableList.of(
-                        baseBelowCompletion,
-                        baseBelowCompletion + "\nbelow.belowMethod();",
-                        "above.;" + baseBelowCompletion,
-                        "self.new BelowClass()./** @complete */");
-        assertCompletion("CompleteInMethod.java", belowCases, "belowField", "belowMethod", "toString");
-    }
-
-    @Test
-    public void completeStaticMemberSelection() throws Exception {
-        assertCompletion(
-                "CompleteInMethod.java",
-                ImmutableList.of("BelowClass./** @complete */"),
-                "STATIC_BELOW_FIELD",
-                "staticBelowMethod");
-        assertCompletion(
-                "CompleteInMethod.java",
-                ImmutableList.of("CompleteInMethod./** @complete */"),
-                "AboveClass",
-                "BelowClass",
-                "STATIC_FIELD",
-                "staticMethod",
-                "staticMethod" /* overload of staticMethod */);
-    }
-
-    @Test
-    public void completeMethodReference() throws Exception {
-        assertCompletion(
-                "CompleteInMethod.java",
-                ImmutableList.of("CompleteInMethod::/** @complete */"),
-                "staticMethod");
-        assertCompletion(
-                "CompleteInMethod.java",
-                ImmutableList.of("this::/** @complete */"),
-                "completeMethod",
-                "toString");
-    }
-
-    @Test
-    public void completeTwoDots() throws Exception {
-        String toComplete = "above./** @complete */.something";
-
-        List<CompletionCandidate> candidates = completeWithContent("CompleteInMethod.java", toComplete);
-        assertThat(getCandidateNames(candidates))
-                .containsAtLeast("aboveField", "aboveMethod", "toString");
-    }
-
-    @Test
-    public void completeMemberSelectionInOtherFile() throws Exception {
-        List<CompletionCandidate> candidates =
-                completeWithContent(
-                        "CompleteInMethod.java",
-                        "new OtherClass().innerClass./** @complete */",
-                        "OtherClass.java");
-        assertThat(getCandidateNames(candidates))
-                .containsExactly("innerInnerClass", "getInnerInnerClass", "toString");
-    }
-
-    @Test
-    public void completeImport() throws Exception {
-        String baseImportCompletion = "import com.tyron.javacompletion./** @complete */";
-        List<String> cases =
-                ImmutableList.of(
-                        baseImportCompletion,
-                        baseImportCompletion + "\nimport java.util.List;",
-                        "import java.util.List;\n" + baseImportCompletion);
-        assertCompletion("CompleteOutOfClass.java", cases, "completion");
-    }
-
-    @Test
-    public void completeImportPackage() throws Exception {
-        List<String> cases =
-                ImmutableList.of(
-                        "import com.tyron.javacompletion.completion./** @complete */;",
-                        "import static com.tyron.javacompletion.completion./** @complete */;");
-        assertCompletion("CompleteOutOfClass.java", cases, "testdata");
-    }
-
-    @Test
-    public void completeImportInnerClass() throws Exception {
-        String toComplete = "import com.tyron.javacompletion.completion.testdata.OtherClass./** @complete */";
-        List<CompletionCandidate> candidates =
-                completeWithContent("CompleteOutOfClass.java", toComplete, "OtherClass.java");
-        assertThat(getCandidateNames(candidates)).containsExactly("InnerClass");
-    }
-
-    @Test
-    public void completeWithTypeCast() throws Exception {
-        assertThat(
-                getCandidateNames(
-                        completeWithContent(
-                                "CompleteInMethod.java", "((BelowClass) above)./** @complete */")))
-                .contains("belowField");
     }
 }
