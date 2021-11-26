@@ -1,5 +1,6 @@
 package com.tyron.javacompletion.file;
 
+import com.github.marschall.com.sun.nio.zipfs.ZipFileSystemProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.tyron.javacompletion.logging.JLogger;
@@ -140,7 +141,7 @@ public class PathUtils {
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }
-        FileSystem fs = FileSystems.newFileSystem(uri, ImmutableMap.of() /* env */);
+        FileSystem fs = ZipFileSystemProvider.newJarFileSystem(uri, ImmutableMap.of() /* env */);
         return fs.getPath("/");
     }
 }

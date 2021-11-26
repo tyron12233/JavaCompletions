@@ -2,7 +2,7 @@
   <artifact type="jar" name="JavaComp:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/JavaComp_jar</output-path>
     <root id="archive" name="JavaComp.jar">
-      <element id="module-output" name="JavaComp.main" />
+      <element id="module-output" name="java-completions.main" />
     </root>
   </artifact>
 </component>
