@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.openjdk.source.tree.ExpressionTree;
+
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Optional;
@@ -17,7 +18,9 @@ import com.tyron.javacompletion.project.PositionContext;
 import com.tyron.javacompletion.typesolver.ExpressionSolver;
 import com.tyron.javacompletion.typesolver.TypeSolver;
 
-/** An action to get completion candidates for member selection. */
+/**
+ * An action to get completion candidates for member selection.
+ */
 class CompleteMemberAction implements CompletionAction {
     private static final JLogger logger = JLogger.createForEnclosingClass();
 
@@ -104,7 +107,22 @@ class CompleteMemberAction implements CompletionAction {
 
         // TODO: handle array type
         if (solvedParent.get().getArrayLevel() > 0) {
-            return ImmutableList.of();
+            return ImmutableList.of(new CompletionCandidate() {
+                @Override
+                public String getName() {
+                    return "length";
+                }
+
+                @Override
+                public Kind getKind() {
+                    return Kind.FIELD;
+                }
+
+                @Override
+                public Optional<String> getDetail() {
+                    return Optional.of("int");
+                }
+            });
         }
 
         if (solvedParent.get().getEntity() instanceof ClassEntity) {
@@ -121,15 +139,11 @@ class CompleteMemberAction implements CompletionAction {
     private ImmutableList<CompletionCandidate> completePackageMembers(
             Collection<Entity> entities, String completionPrefix) {
         return entities.stream()
-                .filter(
-                        (entity) -> {
-                            return options.allowedKinds().contains(entity.getKind())
-                                    && CompletionPrefixMatcher.matches(entity.getSimpleName(), completionPrefix);
-                        })
-                .map(
-                        (entity) ->
-                                new EntityCompletionCandidate(
-                                        entity, CompletionCandidate.SortCategory.DIRECT_MEMBER))
+                .filter((entity) -> options.allowedKinds().contains(entity.getKind())
+                        && CompletionPrefixMatcher.matches(entity.getSimpleName(), completionPrefix))
+                .map((entity) ->
+                        new EntityCompletionCandidate(
+                                entity, CompletionCandidate.SortCategory.DIRECT_MEMBER))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 }
